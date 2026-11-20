@@ -1,0 +1,35 @@
+name: mobileprep_ai
+description: "MobilePrep AI - Production-grade Flutter interview preparation app with Isar reactive streams and Gemini AI."
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.8.1
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+  isar_community: 3.2.0
+  isar_community_flutter_libs: 3.2.0
+  path_provider: ^2.1.5
+  flutter_riverpod: ^2.6.1
+  crypto: ^3.0.8
+  intl: ^0.20.2
+  uuid: ^4.6.0
+  http: ^1.6.0
+  camera: ^0.11.2+1
+  permission_handler: ^13.0.2
+  speech_to_text: ^7.4.0
+  flutter_tts: ^4.2.5
+  fl_chart: ^1.1.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+  build_runner: ^2.4.13
+  isar_community_generator: 3.2.0
+
+flutter:
+  uses-material-design: true
