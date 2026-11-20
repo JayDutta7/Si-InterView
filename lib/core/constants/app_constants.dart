@@ -46,6 +46,10 @@ class AppConstants {
   static const String geminiEndpoint =
       'https://generativelanguage.googleapis.com/v1beta/models';
 
-  // Environment define key
+  // Environment define keys (.env support)
+  static const String envGeminiKey = 'GEMINI_KEY';
   static const String envGeminiApiKey = 'GEMINI_API_KEY';
+  static const String envGeminiKeyLower = 'gemini_key';
+  static const String envEnvironment = 'ENVIRONMENT';
+  static const String envAppTitle = 'APP_TITLE';
 }

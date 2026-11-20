@@ -10,8 +10,19 @@ final isarProvider = Provider<Isar>((ref) {
 });
 
 /// Riverpod provider holding the current Gemini API Key.
-/// Defaults to `--dart-define=GEMINI_API_KEY` or empty string.
-/// Can be updated dynamically from the UI settings.
+/// Resolves from .env via `--dart-define-from-file` using `GEMINI_KEY`, `gemini_key`,
+/// or `GEMINI_API_KEY`, and falls back to empty string (which enables curated offline mode).
+/// Can also be updated dynamically from the UI settings.
 final geminiApiKeyProvider = StateProvider<String>((ref) {
-  return const String.fromEnvironment(AppConstants.envGeminiApiKey, defaultValue: '');
+  const envVal = String.fromEnvironment(
+    AppConstants.envGeminiKey,
+    defaultValue: String.fromEnvironment(
+      AppConstants.envGeminiApiKey,
+      defaultValue: String.fromEnvironment(
+        AppConstants.envGeminiKeyLower,
+        defaultValue: '',
+      ),
+    ),
+  );
+  return envVal;
 });
