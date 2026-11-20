@@ -44,7 +44,10 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 
-# Local environment secrets
+# Environment files with secrets
+.env
+.env.uat
+.env.production
+.env.*
+!.env.example
 *.local.env
-.env.local
-.env.*.local
