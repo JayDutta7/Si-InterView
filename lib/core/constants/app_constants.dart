@@ -41,8 +41,17 @@ class AppConstants {
   static const List<int> questionCounts = [5, 10, 15];
 
   // Gemini Defaults
-  static const String defaultGeminiModel = 'gemini-1.5-flash';
-  static const String fallbackGeminiModel = 'gemini-1.5-pro';
+  static const String defaultGeminiModel = String.fromEnvironment(
+    'GEMINI_DEFAULT_MODEL',
+    defaultValue: String.fromEnvironment(
+      'GEMINI_MODEL',
+      defaultValue: 'gemini-3.8-flash',
+    ),
+  );
+  static const String fallbackGeminiModel = String.fromEnvironment(
+    'GEMINI_FALLBACK_MODEL',
+    defaultValue: 'gemini-2.5-flash',
+  );
   static const String geminiEndpoint =
       'https://generativelanguage.googleapis.com/v1beta/models';
 

@@ -56,9 +56,11 @@ Output MUST be a JSON array of objects strictly matching this schema:
 ''';
 
     final modelsToTry = [
-      'gemini-1.5-flash',
+      AppConstants.defaultGeminiModel,
+      'gemini-3.8-flash',
+      'gemini-2.5-flash',
       'gemini-2.0-flash',
-      'gemini-1.5-pro',
+      'gemini-1.5-flash',
     ];
 
     Exception? lastException;
