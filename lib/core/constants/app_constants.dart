@@ -1,7 +1,7 @@
 class AppConstants {
   AppConstants._();
 
-  static const String appName = 'MobilePrep AI';
+  static const String appName = 'SiNTerview';
 
   // Sections
   static const String sectionFlutterDart = 'Flutter & Dart';

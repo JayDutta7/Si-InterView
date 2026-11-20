@@ -9,7 +9,7 @@
     <uses-feature android:name="android.hardware.camera.autofocus" android:required="false"/>
 
     <application
-        android:label="mobileprep_ai"
+        android:label="SiNTerview"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

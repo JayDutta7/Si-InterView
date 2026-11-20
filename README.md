@@ -1,4 +1,4 @@
-# MobilePrep AI 🚀
+# SiNTerview 🚀
 
 A production-grade Flutter application built with **Clean Architecture**, **MVVM**, and **Riverpod** where **Isar** (`isar_community` v3) serves as **BOTH** the local database and the reactive stream source driving application state.
 
@@ -103,4 +103,15 @@ lib/
 └── main.dart                          # App entry point initializing Isar & Riverpod
 ```
 
----# Si-InterView
+---
+
+## 💬 Project Discussion & Future Possibilities
+
+### 💡 Project Discussion
+**SiNTerview** is a production-grade Flutter application built with Clean Architecture, MVVM, and Riverpod. It pairs anti-repeat SHA-256 question deduplication and reactive Isar local database streams with multimodal Gemini AI to deliver interactive quizzes and live camera/voice interview evaluations.
+
+### 🚀 Future Possibilities
+- **On-Device LLMs (LiteRT-LM):** Offline, zero-latency local AI interviewers.
+- **Visual & Body Language AI:** Multimodal evaluation of posture, eye contact, and expression.
+- **Targeted Company Tracks:** Customized mock interview modules for specific tech roles and companies.
+- **Peer-to-Peer Mock Interviews:** Collaborative live sessions with automated AI feedback.
