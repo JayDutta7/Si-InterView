@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:mobileprep_ai/core/theme/app_theme.dart';
+import 'package:mobileprep_ai/features/performance/presentation/screens/performance_dashboard_screen.dart';
+import 'package:mobileprep_ai/features/performance/presentation/widgets/realtime_telemetry_strip.dart';
 import 'package:mobileprep_ai/features/quiz/presentation/controllers/quiz_controller.dart';
 import 'package:mobileprep_ai/features/quiz/presentation/providers/quiz_providers.dart';
 import 'package:mobileprep_ai/features/quiz/presentation/widgets/feedback_card.dart';
@@ -97,9 +99,26 @@ class QuizPlayScreen extends ConsumerWidget {
               minHeight: 4,
             ),
 
+            // Real-Time In-Session Telemetry Strip HUD
+            RealtimeTelemetryStrip(
+              totalAnswered: state.sessionAnsweredCount,
+              correctCount: state.sessionCorrectCount,
+              currentAccuracy: state.liveAccuracy,
+              avgPaceSeconds: state.liveAvgPaceSeconds,
+              optionChanges: state.optionChangesCount,
+              onExpand: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const PerformanceDashboardScreen(),
+                  ),
+                );
+              },
+            ),
+
             Expanded(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.all(20),
+                padding: const EdgeInsets.fromLTRB(20, 8, 20, 20),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -265,13 +284,36 @@ class QuizPlayScreen extends ConsumerWidget {
                 ),
               ),
 
-              const SizedBox(height: 36),
+              const SizedBox(height: 32),
+
+              // View Real-Time Performance Dashboard
+              SizedBox(
+                width: double.infinity,
+                height: 50,
+                child: ElevatedButton.icon(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const PerformanceDashboardScreen(),
+                      ),
+                    );
+                  },
+                  icon: const Icon(Icons.speed_rounded),
+                  label: const Text('View Performance Dashboard (9 Metrics)'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppTheme.primaryColor,
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 12),
 
               // Review Session Button
               SizedBox(
                 width: double.infinity,
                 height: 50,
-                child: ElevatedButton.icon(
+                child: OutlinedButton.icon(
                   onPressed: () {
                     Navigator.pushReplacement(
                       context,
@@ -287,13 +329,13 @@ class QuizPlayScreen extends ConsumerWidget {
                 ),
               ),
 
-              const SizedBox(height: 14),
+              const SizedBox(height: 12),
 
               // Done Button
               SizedBox(
                 width: double.infinity,
                 height: 50,
-                child: OutlinedButton(
+                child: TextButton(
                   onPressed: () {
                     Navigator.pop(context);
                   },

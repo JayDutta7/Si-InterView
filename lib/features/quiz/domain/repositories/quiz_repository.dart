@@ -25,6 +25,8 @@ abstract class QuizRepository {
     required QuestionEntity question,
     required int selectedIndex,
     required int responseTimeMs,
+    String? difficulty,
+    int optionChangesCount = 0,
   });
 
   /// Complete a session, computing score percent and updating Isar.

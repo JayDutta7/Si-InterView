@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:mobileprep_ai/features/analytics/presentation/screens/score_analysis_screen.dart';
 import 'package:mobileprep_ai/features/live_interview/presentation/screens/live_interview_screen.dart';
+import 'package:mobileprep_ai/features/performance/presentation/screens/performance_dashboard_screen.dart';
 import 'package:mobileprep_ai/features/quiz/presentation/screens/quiz_setup_screen.dart';
 
 class MainNavigationScreen extends StatefulWidget {
@@ -17,6 +18,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
   final List<Widget> _screens = [
     const QuizSetupScreen(),
     const LiveInterviewScreen(),
+    const PerformanceDashboardScreen(),
     const ScoreAnalysisScreen(),
   ];
 
@@ -44,9 +46,14 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
             label: '1-to-1 Live',
           ),
           NavigationDestination(
-            icon: Icon(Icons.analytics_outlined),
+            icon: Icon(Icons.speed_outlined),
+            selectedIcon: Icon(Icons.speed_rounded),
+            label: 'Performance',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.history_rounded),
             selectedIcon: Icon(Icons.analytics_rounded),
-            label: 'Score Analysis',
+            label: 'History & Review',
           ),
         ],
       ),

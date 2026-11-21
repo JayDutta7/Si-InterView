@@ -21,4 +21,8 @@ class QuestionAttempt {
   late String explanation;
   late DateTime answeredAt;
   late int responseTimeMs;
+
+  String difficulty = 'Mid';
+  int optionChangesCount = 0;
+  double evaluationRating = 0.0;
 }

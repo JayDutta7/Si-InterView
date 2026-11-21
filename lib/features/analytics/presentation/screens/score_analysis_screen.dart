@@ -7,6 +7,7 @@ import 'package:mobileprep_ai/features/quiz/presentation/screens/quiz_session_re
 import 'package:mobileprep_ai/features/quiz/presentation/screens/quiz_setup_screen.dart';
 import 'package:mobileprep_ai/features/live_interview/presentation/providers/live_interview_providers.dart';
 import 'package:mobileprep_ai/features/live_interview/presentation/screens/live_interview_summary_screen.dart';
+import 'package:mobileprep_ai/features/performance/presentation/screens/performance_dashboard_screen.dart';
 import 'package:mobileprep_ai/features/analytics/data/analytics_isar_datasource.dart';
 import 'package:mobileprep_ai/features/analytics/presentation/providers/analytics_providers.dart';
 
@@ -30,6 +31,37 @@ class ScoreAnalysisScreen extends ConsumerWidget {
           return ListView(
             padding: const EdgeInsets.all(16),
             children: [
+              // Real-Time 9-Metric Performance Dashboard Banner
+              Card(
+                color: AppTheme.primaryLight.withValues(alpha: 0.12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                  side: const BorderSide(color: AppTheme.primaryLight, width: 1.2),
+                ),
+                child: ListTile(
+                  leading: const Icon(Icons.speed_rounded, color: AppTheme.primaryLight, size: 28),
+                  title: const Text(
+                    'Real-Time Performance Dashboard',
+                    style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14.5),
+                  ),
+                  subtitle: const Text(
+                    'Inspect 9 Algorithmic Dimensions & Readiness Tier',
+                    style: TextStyle(fontSize: 12),
+                  ),
+                  trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const PerformanceDashboardScreen(),
+                      ),
+                    );
+                  },
+                ),
+              ),
+
+              const SizedBox(height: 16),
+
               // 1. Overall Accuracy & Metrics Cards
               _buildOverallMetricsCard(context, stats),
 

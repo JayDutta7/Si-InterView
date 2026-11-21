@@ -9,6 +9,8 @@ import '../controllers/live_interview_controller.dart';
 import '../providers/live_interview_providers.dart';
 import '../widgets/camera_preview_card.dart';
 import '../widgets/state_badge.dart';
+import 'package:mobileprep_ai/features/performance/presentation/widgets/realtime_telemetry_strip.dart';
+import 'package:mobileprep_ai/features/performance/presentation/screens/performance_dashboard_screen.dart';
 import 'live_interview_summary_screen.dart';
 
 class LiveInterviewScreen extends ConsumerStatefulWidget {
@@ -140,6 +142,23 @@ class _LiveInterviewScreenState extends ConsumerState<LiveInterviewScreen> {
                 ],
               ),
             ),
+
+            if (state.exchanges.isNotEmpty)
+              RealtimeTelemetryStrip(
+                totalAnswered: state.exchanges.length,
+                correctCount: state.exchanges.where((e) => e.verdict == AnswerVerdict.right).length,
+                currentAccuracy: (state.overallScore * 10.0),
+                avgPaceSeconds: 18.5,
+                statusText: 'Live Audio Telemetry',
+                onExpand: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const PerformanceDashboardScreen(),
+                    ),
+                  );
+                },
+              ),
 
             const Divider(height: 1),
 

@@ -135,7 +135,11 @@ class QuizRepositoryImpl implements QuizRepository {
     required QuestionEntity question,
     required int selectedIndex,
     required int responseTimeMs,
+    String? difficulty,
+    int optionChangesCount = 0,
   }) async {
+    final session = await _isarDataSource.getSessionById(sessionId);
+    final resolvedDifficulty = difficulty ?? session?.difficulty ?? 'Mid';
     final isCorrect = selectedIndex == question.correctOptionIndex;
 
     // 1. Create and save attempt in Isar inside writeTxn
@@ -152,12 +156,14 @@ class QuizRepositoryImpl implements QuizRepository {
       ..isCorrect = isCorrect
       ..explanation = question.explanation
       ..answeredAt = DateTime.now()
-      ..responseTimeMs = responseTimeMs;
+      ..responseTimeMs = responseTimeMs
+      ..difficulty = resolvedDifficulty
+      ..optionChangesCount = optionChangesCount
+      ..evaluationRating = isCorrect ? 100.0 : 0.0;
 
     await _isarDataSource.saveQuestionAttempt(attempt);
 
     // 2. Update QuizSession stats inside writeTxn
-    final session = await _isarDataSource.getSessionById(sessionId);
     if (session != null) {
       if (isCorrect) {
         session.correctCount += 1;

@@ -16,6 +16,10 @@ class QuizPlayState {
   final QuestionAttempt? lastAttempt;
   final bool isSessionFinished;
   final DateTime? questionStartTime;
+  final int sessionAnsweredCount;
+  final int sessionCorrectCount;
+  final int sessionTotalResponseTimeMs;
+  final int optionChangesCount;
 
   const QuizPlayState({
     this.isLoading = false,
@@ -28,6 +32,10 @@ class QuizPlayState {
     this.lastAttempt,
     this.isSessionFinished = false,
     this.questionStartTime,
+    this.sessionAnsweredCount = 0,
+    this.sessionCorrectCount = 0,
+    this.sessionTotalResponseTimeMs = 0,
+    this.optionChangesCount = 0,
   });
 
   QuestionEntity? get currentQuestion {
@@ -42,6 +50,12 @@ class QuizPlayState {
   bool get isLastQuestion =>
       questions.isNotEmpty && currentQuestionIndex == questions.length - 1;
 
+  double get liveAccuracy =>
+      sessionAnsweredCount > 0 ? (sessionCorrectCount / sessionAnsweredCount) * 100.0 : 0.0;
+
+  double get liveAvgPaceSeconds =>
+      sessionAnsweredCount > 0 ? (sessionTotalResponseTimeMs / sessionAnsweredCount) / 1000.0 : 0.0;
+
   QuizPlayState copyWith({
     bool? isLoading,
     String? errorMessage,
@@ -53,6 +67,10 @@ class QuizPlayState {
     QuestionAttempt? lastAttempt,
     bool? isSessionFinished,
     DateTime? questionStartTime,
+    int? sessionAnsweredCount,
+    int? sessionCorrectCount,
+    int? sessionTotalResponseTimeMs,
+    int? optionChangesCount,
   }) {
     return QuizPlayState(
       isLoading: isLoading ?? this.isLoading,
@@ -65,6 +83,10 @@ class QuizPlayState {
       lastAttempt: lastAttempt ?? this.lastAttempt,
       isSessionFinished: isSessionFinished ?? this.isSessionFinished,
       questionStartTime: questionStartTime ?? this.questionStartTime,
+      sessionAnsweredCount: sessionAnsweredCount ?? this.sessionAnsweredCount,
+      sessionCorrectCount: sessionCorrectCount ?? this.sessionCorrectCount,
+      sessionTotalResponseTimeMs: sessionTotalResponseTimeMs ?? this.sessionTotalResponseTimeMs,
+      optionChangesCount: optionChangesCount ?? this.optionChangesCount,
     );
   }
 }
@@ -120,6 +142,10 @@ class QuizController extends StateNotifier<QuizPlayState> {
         lastAttempt: null,
         isSessionFinished: false,
         questionStartTime: DateTime.now(),
+        sessionAnsweredCount: 0,
+        sessionCorrectCount: 0,
+        sessionTotalResponseTimeMs: 0,
+        optionChangesCount: 0,
       );
     } catch (e) {
       state = state.copyWith(
@@ -141,20 +167,26 @@ class QuizController extends StateNotifier<QuizPlayState> {
 
     final question = state.currentQuestion!;
     final sessionId = state.session!.sessionId;
+    final isCorrect = optionIndex == question.correctOptionIndex;
 
-    // Immediately record attempt in Isar inside writeTxn
+    // Immediately record attempt in Isar inside writeTxn with difficulty & telemetry
     final attempt = await _repository.recordAttempt(
       sessionId: sessionId,
       question: question,
       selectedIndex: optionIndex,
       responseTimeMs: responseTimeMs,
+      difficulty: state.session?.difficulty,
+      optionChangesCount: state.optionChangesCount,
     );
 
-    // Update state immediately with right/wrong feedback, highlights & explanation
+    // Update state immediately with right/wrong feedback, telemetry stats & highlights
     state = state.copyWith(
       selectedOptionIndex: optionIndex,
       isAnswered: true,
       lastAttempt: attempt,
+      sessionAnsweredCount: state.sessionAnsweredCount + 1,
+      sessionCorrectCount: state.sessionCorrectCount + (isCorrect ? 1 : 0),
+      sessionTotalResponseTimeMs: state.sessionTotalResponseTimeMs + responseTimeMs,
     );
   }
 

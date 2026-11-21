@@ -27,53 +27,68 @@ const QuestionAttemptSchema = CollectionSchema(
       name: r'correctIndex',
       type: IsarType.long,
     ),
-    r'explanation': PropertySchema(
+    r'difficulty': PropertySchema(
       id: 2,
+      name: r'difficulty',
+      type: IsarType.string,
+    ),
+    r'evaluationRating': PropertySchema(
+      id: 3,
+      name: r'evaluationRating',
+      type: IsarType.double,
+    ),
+    r'explanation': PropertySchema(
+      id: 4,
       name: r'explanation',
       type: IsarType.string,
     ),
     r'isCorrect': PropertySchema(
-      id: 3,
+      id: 5,
       name: r'isCorrect',
       type: IsarType.bool,
     ),
+    r'optionChangesCount': PropertySchema(
+      id: 6,
+      name: r'optionChangesCount',
+      type: IsarType.long,
+    ),
     r'options': PropertySchema(
-      id: 4,
+      id: 7,
       name: r'options',
       type: IsarType.stringList,
     ),
     r'questionHash': PropertySchema(
-      id: 5,
+      id: 8,
       name: r'questionHash',
       type: IsarType.string,
     ),
     r'questionRecordId': PropertySchema(
-      id: 6,
+      id: 9,
       name: r'questionRecordId',
       type: IsarType.long,
     ),
     r'questionText': PropertySchema(
-      id: 7,
+      id: 10,
       name: r'questionText',
       type: IsarType.string,
     ),
     r'responseTimeMs': PropertySchema(
-      id: 8,
+      id: 11,
       name: r'responseTimeMs',
       type: IsarType.long,
     ),
-    r'section': PropertySchema(id: 9, name: r'section', type: IsarType.string),
+    r'section': PropertySchema(id: 12, name: r'section', type: IsarType.string),
     r'selectedIndex': PropertySchema(
-      id: 10,
+      id: 13,
       name: r'selectedIndex',
       type: IsarType.long,
     ),
     r'sessionId': PropertySchema(
-      id: 11,
+      id: 14,
       name: r'sessionId',
       type: IsarType.string,
     ),
-    r'topic': PropertySchema(id: 12, name: r'topic', type: IsarType.string),
+    r'topic': PropertySchema(id: 15, name: r'topic', type: IsarType.string),
   },
 
   estimateSize: _questionAttemptEstimateSize,
@@ -111,6 +126,7 @@ int _questionAttemptEstimateSize(
   Map<Type, List<int>> allOffsets,
 ) {
   var bytesCount = offsets.last;
+  bytesCount += 3 + object.difficulty.length * 3;
   bytesCount += 3 + object.explanation.length * 3;
   bytesCount += 3 + object.options.length * 3;
   {
@@ -135,17 +151,20 @@ void _questionAttemptSerialize(
 ) {
   writer.writeDateTime(offsets[0], object.answeredAt);
   writer.writeLong(offsets[1], object.correctIndex);
-  writer.writeString(offsets[2], object.explanation);
-  writer.writeBool(offsets[3], object.isCorrect);
-  writer.writeStringList(offsets[4], object.options);
-  writer.writeString(offsets[5], object.questionHash);
-  writer.writeLong(offsets[6], object.questionRecordId);
-  writer.writeString(offsets[7], object.questionText);
-  writer.writeLong(offsets[8], object.responseTimeMs);
-  writer.writeString(offsets[9], object.section);
-  writer.writeLong(offsets[10], object.selectedIndex);
-  writer.writeString(offsets[11], object.sessionId);
-  writer.writeString(offsets[12], object.topic);
+  writer.writeString(offsets[2], object.difficulty);
+  writer.writeDouble(offsets[3], object.evaluationRating);
+  writer.writeString(offsets[4], object.explanation);
+  writer.writeBool(offsets[5], object.isCorrect);
+  writer.writeLong(offsets[6], object.optionChangesCount);
+  writer.writeStringList(offsets[7], object.options);
+  writer.writeString(offsets[8], object.questionHash);
+  writer.writeLong(offsets[9], object.questionRecordId);
+  writer.writeString(offsets[10], object.questionText);
+  writer.writeLong(offsets[11], object.responseTimeMs);
+  writer.writeString(offsets[12], object.section);
+  writer.writeLong(offsets[13], object.selectedIndex);
+  writer.writeString(offsets[14], object.sessionId);
+  writer.writeString(offsets[15], object.topic);
 }
 
 QuestionAttempt _questionAttemptDeserialize(
@@ -157,18 +176,21 @@ QuestionAttempt _questionAttemptDeserialize(
   final object = QuestionAttempt();
   object.answeredAt = reader.readDateTime(offsets[0]);
   object.correctIndex = reader.readLong(offsets[1]);
-  object.explanation = reader.readString(offsets[2]);
+  object.difficulty = reader.readString(offsets[2]);
+  object.evaluationRating = reader.readDouble(offsets[3]);
+  object.explanation = reader.readString(offsets[4]);
   object.id = id;
-  object.isCorrect = reader.readBool(offsets[3]);
-  object.options = reader.readStringList(offsets[4]) ?? [];
-  object.questionHash = reader.readString(offsets[5]);
-  object.questionRecordId = reader.readLong(offsets[6]);
-  object.questionText = reader.readString(offsets[7]);
-  object.responseTimeMs = reader.readLong(offsets[8]);
-  object.section = reader.readString(offsets[9]);
-  object.selectedIndex = reader.readLong(offsets[10]);
-  object.sessionId = reader.readString(offsets[11]);
-  object.topic = reader.readString(offsets[12]);
+  object.isCorrect = reader.readBool(offsets[5]);
+  object.optionChangesCount = reader.readLong(offsets[6]);
+  object.options = reader.readStringList(offsets[7]) ?? [];
+  object.questionHash = reader.readString(offsets[8]);
+  object.questionRecordId = reader.readLong(offsets[9]);
+  object.questionText = reader.readString(offsets[10]);
+  object.responseTimeMs = reader.readLong(offsets[11]);
+  object.section = reader.readString(offsets[12]);
+  object.selectedIndex = reader.readLong(offsets[13]);
+  object.sessionId = reader.readString(offsets[14]);
+  object.topic = reader.readString(offsets[15]);
   return object;
 }
 
@@ -186,24 +208,30 @@ P _questionAttemptDeserializeProp<P>(
     case 2:
       return (reader.readString(offset)) as P;
     case 3:
-      return (reader.readBool(offset)) as P;
+      return (reader.readDouble(offset)) as P;
     case 4:
-      return (reader.readStringList(offset) ?? []) as P;
-    case 5:
       return (reader.readString(offset)) as P;
+    case 5:
+      return (reader.readBool(offset)) as P;
     case 6:
       return (reader.readLong(offset)) as P;
     case 7:
-      return (reader.readString(offset)) as P;
+      return (reader.readStringList(offset) ?? []) as P;
     case 8:
-      return (reader.readLong(offset)) as P;
+      return (reader.readString(offset)) as P;
     case 9:
-      return (reader.readString(offset)) as P;
-    case 10:
       return (reader.readLong(offset)) as P;
-    case 11:
+    case 10:
       return (reader.readString(offset)) as P;
+    case 11:
+      return (reader.readLong(offset)) as P;
     case 12:
+      return (reader.readString(offset)) as P;
+    case 13:
+      return (reader.readLong(offset)) as P;
+    case 14:
+      return (reader.readString(offset)) as P;
+    case 15:
       return (reader.readString(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -472,6 +500,222 @@ extension QuestionAttemptQueryFilter
   }
 
   QueryBuilder<QuestionAttempt, QuestionAttempt, QAfterFilterCondition>
+  difficultyEqualTo(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'difficulty',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<QuestionAttempt, QuestionAttempt, QAfterFilterCondition>
+  difficultyGreaterThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'difficulty',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<QuestionAttempt, QuestionAttempt, QAfterFilterCondition>
+  difficultyLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'difficulty',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<QuestionAttempt, QuestionAttempt, QAfterFilterCondition>
+  difficultyBetween(
+    String lower,
+    String upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'difficulty',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<QuestionAttempt, QuestionAttempt, QAfterFilterCondition>
+  difficultyStartsWith(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'difficulty',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<QuestionAttempt, QuestionAttempt, QAfterFilterCondition>
+  difficultyEndsWith(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'difficulty',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<QuestionAttempt, QuestionAttempt, QAfterFilterCondition>
+  difficultyContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'difficulty',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<QuestionAttempt, QuestionAttempt, QAfterFilterCondition>
+  difficultyMatches(String pattern, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'difficulty',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<QuestionAttempt, QuestionAttempt, QAfterFilterCondition>
+  difficultyIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'difficulty', value: ''),
+      );
+    });
+  }
+
+  QueryBuilder<QuestionAttempt, QuestionAttempt, QAfterFilterCondition>
+  difficultyIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'difficulty', value: ''),
+      );
+    });
+  }
+
+  QueryBuilder<QuestionAttempt, QuestionAttempt, QAfterFilterCondition>
+  evaluationRatingEqualTo(double value, {double epsilon = Query.epsilon}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'evaluationRating',
+          value: value,
+
+          epsilon: epsilon,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<QuestionAttempt, QuestionAttempt, QAfterFilterCondition>
+  evaluationRatingGreaterThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'evaluationRating',
+          value: value,
+
+          epsilon: epsilon,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<QuestionAttempt, QuestionAttempt, QAfterFilterCondition>
+  evaluationRatingLessThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'evaluationRating',
+          value: value,
+
+          epsilon: epsilon,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<QuestionAttempt, QuestionAttempt, QAfterFilterCondition>
+  evaluationRatingBetween(
+    double lower,
+    double upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'evaluationRating',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+
+          epsilon: epsilon,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<QuestionAttempt, QuestionAttempt, QAfterFilterCondition>
   explanationEqualTo(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
@@ -672,6 +916,61 @@ extension QuestionAttemptQueryFilter
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         FilterCondition.equalTo(property: r'isCorrect', value: value),
+      );
+    });
+  }
+
+  QueryBuilder<QuestionAttempt, QuestionAttempt, QAfterFilterCondition>
+  optionChangesCountEqualTo(int value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'optionChangesCount', value: value),
+      );
+    });
+  }
+
+  QueryBuilder<QuestionAttempt, QuestionAttempt, QAfterFilterCondition>
+  optionChangesCountGreaterThan(int value, {bool include = false}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'optionChangesCount',
+          value: value,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<QuestionAttempt, QuestionAttempt, QAfterFilterCondition>
+  optionChangesCountLessThan(int value, {bool include = false}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'optionChangesCount',
+          value: value,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<QuestionAttempt, QuestionAttempt, QAfterFilterCondition>
+  optionChangesCountBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'optionChangesCount',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+        ),
       );
     });
   }
@@ -1778,6 +2077,34 @@ extension QuestionAttemptQuerySortBy
   }
 
   QueryBuilder<QuestionAttempt, QuestionAttempt, QAfterSortBy>
+  sortByDifficulty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'difficulty', Sort.asc);
+    });
+  }
+
+  QueryBuilder<QuestionAttempt, QuestionAttempt, QAfterSortBy>
+  sortByDifficultyDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'difficulty', Sort.desc);
+    });
+  }
+
+  QueryBuilder<QuestionAttempt, QuestionAttempt, QAfterSortBy>
+  sortByEvaluationRating() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'evaluationRating', Sort.asc);
+    });
+  }
+
+  QueryBuilder<QuestionAttempt, QuestionAttempt, QAfterSortBy>
+  sortByEvaluationRatingDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'evaluationRating', Sort.desc);
+    });
+  }
+
+  QueryBuilder<QuestionAttempt, QuestionAttempt, QAfterSortBy>
   sortByExplanation() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'explanation', Sort.asc);
@@ -1802,6 +2129,20 @@ extension QuestionAttemptQuerySortBy
   sortByIsCorrectDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isCorrect', Sort.desc);
+    });
+  }
+
+  QueryBuilder<QuestionAttempt, QuestionAttempt, QAfterSortBy>
+  sortByOptionChangesCount() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'optionChangesCount', Sort.asc);
+    });
+  }
+
+  QueryBuilder<QuestionAttempt, QuestionAttempt, QAfterSortBy>
+  sortByOptionChangesCountDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'optionChangesCount', Sort.desc);
     });
   }
 
@@ -1947,6 +2288,34 @@ extension QuestionAttemptQuerySortThenBy
   }
 
   QueryBuilder<QuestionAttempt, QuestionAttempt, QAfterSortBy>
+  thenByDifficulty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'difficulty', Sort.asc);
+    });
+  }
+
+  QueryBuilder<QuestionAttempt, QuestionAttempt, QAfterSortBy>
+  thenByDifficultyDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'difficulty', Sort.desc);
+    });
+  }
+
+  QueryBuilder<QuestionAttempt, QuestionAttempt, QAfterSortBy>
+  thenByEvaluationRating() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'evaluationRating', Sort.asc);
+    });
+  }
+
+  QueryBuilder<QuestionAttempt, QuestionAttempt, QAfterSortBy>
+  thenByEvaluationRatingDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'evaluationRating', Sort.desc);
+    });
+  }
+
+  QueryBuilder<QuestionAttempt, QuestionAttempt, QAfterSortBy>
   thenByExplanation() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'explanation', Sort.asc);
@@ -1983,6 +2352,20 @@ extension QuestionAttemptQuerySortThenBy
   thenByIsCorrectDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isCorrect', Sort.desc);
+    });
+  }
+
+  QueryBuilder<QuestionAttempt, QuestionAttempt, QAfterSortBy>
+  thenByOptionChangesCount() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'optionChangesCount', Sort.asc);
+    });
+  }
+
+  QueryBuilder<QuestionAttempt, QuestionAttempt, QAfterSortBy>
+  thenByOptionChangesCountDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'optionChangesCount', Sort.desc);
     });
   }
 
@@ -2114,6 +2497,20 @@ extension QuestionAttemptQueryWhereDistinct
   }
 
   QueryBuilder<QuestionAttempt, QuestionAttempt, QDistinct>
+  distinctByDifficulty({bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'difficulty', caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<QuestionAttempt, QuestionAttempt, QDistinct>
+  distinctByEvaluationRating() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'evaluationRating');
+    });
+  }
+
+  QueryBuilder<QuestionAttempt, QuestionAttempt, QDistinct>
   distinctByExplanation({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'explanation', caseSensitive: caseSensitive);
@@ -2124,6 +2521,13 @@ extension QuestionAttemptQueryWhereDistinct
   distinctByIsCorrect() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'isCorrect');
+    });
+  }
+
+  QueryBuilder<QuestionAttempt, QuestionAttempt, QDistinct>
+  distinctByOptionChangesCount() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'optionChangesCount');
     });
   }
 
@@ -2214,6 +2618,19 @@ extension QuestionAttemptQueryProperty
     });
   }
 
+  QueryBuilder<QuestionAttempt, String, QQueryOperations> difficultyProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'difficulty');
+    });
+  }
+
+  QueryBuilder<QuestionAttempt, double, QQueryOperations>
+  evaluationRatingProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'evaluationRating');
+    });
+  }
+
   QueryBuilder<QuestionAttempt, String, QQueryOperations>
   explanationProperty() {
     return QueryBuilder.apply(this, (query) {
@@ -2224,6 +2641,13 @@ extension QuestionAttemptQueryProperty
   QueryBuilder<QuestionAttempt, bool, QQueryOperations> isCorrectProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'isCorrect');
+    });
+  }
+
+  QueryBuilder<QuestionAttempt, int, QQueryOperations>
+  optionChangesCountProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'optionChangesCount');
     });
   }
 
