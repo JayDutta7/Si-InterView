@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:mobileprep_ai/core/theme/app_theme.dart';
+import 'package:mobileprep_ai/features/adaptive/presentation/providers/adaptive_providers.dart';
+import 'package:mobileprep_ai/features/adaptive/presentation/widgets/adaptive_tier_badge.dart';
 import 'package:mobileprep_ai/features/performance/presentation/screens/performance_dashboard_screen.dart';
 import 'package:mobileprep_ai/features/performance/presentation/widgets/realtime_telemetry_strip.dart';
 import 'package:mobileprep_ai/features/quiz/presentation/controllers/quiz_controller.dart';
@@ -112,6 +114,19 @@ class QuizPlayScreen extends ConsumerWidget {
                   MaterialPageRoute(
                     builder: (_) => const PerformanceDashboardScreen(),
                   ),
+                );
+              },
+            ),
+
+            // Live Adaptive Difficulty Badge & Calibration Feedback
+            Consumer(
+              builder: (context, ref, _) {
+                final adaptiveAsync = ref.watch(adaptiveStateFamilyProvider(question.section));
+                final adaptiveState = adaptiveAsync.valueOrNull;
+                if (adaptiveState == null) return const SizedBox.shrink();
+                return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
+                  child: AdaptiveTierBadge(state: adaptiveState),
                 );
               },
             ),

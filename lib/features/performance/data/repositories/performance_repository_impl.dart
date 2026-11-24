@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:uuid/uuid.dart';
 
 import '../datasources/performance_isar_datasource.dart';
@@ -13,21 +15,51 @@ class PerformanceRepositoryImpl implements PerformanceRepository {
 
   @override
   Stream<ComprehensivePerformance> watchComprehensivePerformance() {
-    // Watch attempts stream and compute ComprehensivePerformance reactively
-    return _dataSource.watchQuestionAttempts().asyncMap((attempts) async {
-      final sessions = await _dataSource.getAllSessions();
-      final liveSessions = await _dataSource.getAllLiveSessions();
-      final latestSnapshot = await _dataSource.getLatestSnapshot();
+    final controller = StreamController<ComprehensivePerformance>();
 
-      final previousScore = latestSnapshot?.overallScore;
+    void update() async {
+      try {
+        final attempts = await _dataSource.getAllAttempts();
+        final sessions = await _dataSource.getAllSessions();
+        final liveSessions = await _dataSource.getAllLiveSessions();
+        final latestSnapshot = await _dataSource.getLatestSnapshot();
 
-      return PerformanceScoringEngine.calculate(
-        attempts: attempts,
-        sessions: sessions,
-        liveSessions: liveSessions,
-        previousOverallScore: previousScore,
-      );
-    });
+        final perf = PerformanceScoringEngine.calculate(
+          attempts: attempts,
+          sessions: sessions,
+          liveSessions: liveSessions,
+          previousOverallScore: latestSnapshot?.overallScore,
+        );
+
+        if (!controller.isClosed) {
+          controller.add(perf);
+        }
+      } catch (e) {
+        if (!controller.isClosed) {
+          controller.addError(e);
+        }
+      }
+    }
+
+    StreamSubscription? sub1;
+    StreamSubscription? sub2;
+    StreamSubscription? sub3;
+
+    controller.onListen = () {
+      update();
+      sub1 = _dataSource.watchQuestionAttempts().listen((_) => update());
+      sub2 = _dataSource.watchQuizSessions().listen((_) => update());
+      sub3 = _dataSource.watchLiveSessions().listen((_) => update());
+    };
+
+    controller.onCancel = () {
+      sub1?.cancel();
+      sub2?.cancel();
+      sub3?.cancel();
+      controller.close();
+    };
+
+    return controller.stream;
   }
 
   @override

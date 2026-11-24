@@ -112,14 +112,18 @@ class ScoreAnalysisScreen extends ConsumerWidget {
                   size: 22,
                 ),
                 const SizedBox(width: 8),
-                const Text(
-                  'Live Isar Performance Analytics',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700,
+                const Expanded(
+                  child: Text(
+                    'Live Isar Performance Analytics',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
                 ),
-                const Spacer(),
+                const SizedBox(width: 8),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                   decoration: BoxDecoration(
@@ -139,35 +143,40 @@ class ScoreAnalysisScreen extends ConsumerWidget {
             ),
             const SizedBox(height: 18),
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                _buildStatItem(
-                  context,
-                  '${stats.overallAccuracy.toStringAsFixed(1)}%',
-                  'Overall Accuracy',
-                  accuracyColor,
+                Expanded(
+                  child: _buildStatItem(
+                    context,
+                    '${stats.overallAccuracy.toStringAsFixed(1)}%',
+                    'Overall Accuracy',
+                    accuracyColor,
+                  ),
                 ),
                 Container(
                   height: 40,
                   width: 1,
                   color: Theme.of(context).colorScheme.outlineVariant,
                 ),
-                _buildStatItem(
-                  context,
-                  '${stats.totalQuestionsAnswered}',
-                  'Questions Solved',
-                  AppTheme.primaryLight,
+                Expanded(
+                  child: _buildStatItem(
+                    context,
+                    '${stats.totalQuestionsAnswered}',
+                    'Questions Solved',
+                    AppTheme.primaryLight,
+                  ),
                 ),
                 Container(
                   height: 40,
                   width: 1,
                   color: Theme.of(context).colorScheme.outlineVariant,
                 ),
-                _buildStatItem(
-                  context,
-                  '${stats.completedSessionsCount}',
-                  'Completed Sets',
-                  AppTheme.secondaryColor,
+                Expanded(
+                  child: _buildStatItem(
+                    context,
+                    '${stats.completedSessionsCount}',
+                    'Completed Sets',
+                    AppTheme.secondaryColor,
+                  ),
                 ),
               ],
             ),
@@ -185,19 +194,23 @@ class ScoreAnalysisScreen extends ConsumerWidget {
   ) {
     return Column(
       children: [
-        Text(
-          value,
-          style: TextStyle(
-            fontSize: 22,
-            fontWeight: FontWeight.w800,
-            color: color,
+        FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Text(
+            value,
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.w800,
+              color: color,
+            ),
           ),
         ),
         const SizedBox(height: 4),
         Text(
           label,
+          textAlign: TextAlign.center,
           style: TextStyle(
-            fontSize: 11.5,
+            fontSize: 11,
             fontWeight: FontWeight.w500,
             color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
           ),
@@ -455,12 +468,17 @@ class ScoreAnalysisScreen extends ConsumerWidget {
                 },
                 leading: CircleAvatar(
                   backgroundColor: scoreColor.withValues(alpha: 0.15),
-                  child: Text(
-                    '${session.scorePercent.toStringAsFixed(0)}%',
-                    style: TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w700,
-                      color: scoreColor,
+                  child: Padding(
+                    padding: const EdgeInsets.all(4),
+                    child: FittedBox(
+                      child: Text(
+                        '${session.scorePercent.toStringAsFixed(0)}%',
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w700,
+                          color: scoreColor,
+                        ),
+                      ),
                     ),
                   ),
                 ),

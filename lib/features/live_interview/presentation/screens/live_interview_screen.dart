@@ -291,9 +291,12 @@ class _LiveInterviewScreenState extends ConsumerState<LiveInterviewScreen> {
                 final isSelected = _selectedDifficulty == diff;
                 return Expanded(
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 4),
+                    padding: const EdgeInsets.symmetric(horizontal: 3),
                     child: ChoiceChip(
-                      label: Center(child: Text(diff)),
+                      label: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Text(diff),
+                      ),
                       selected: isSelected,
                       onSelected: (val) {
                         if (val) setState(() => _selectedDifficulty = diff);
@@ -317,10 +320,13 @@ class _LiveInterviewScreenState extends ConsumerState<LiveInterviewScreen> {
                         difficulty: _selectedDifficulty,
                       );
                 },
-                icon: const Icon(Icons.video_call_rounded, size: 24),
-                label: const Text(
-                  'Launch Live Camera & Voice Interview',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+                icon: const Icon(Icons.video_call_rounded, size: 22),
+                label: const FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    'Launch Live Camera & Voice Interview',
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700),
+                  ),
                 ),
               ),
             ),

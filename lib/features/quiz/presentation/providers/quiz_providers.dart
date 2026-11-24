@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:mobileprep_ai/core/database/isar_provider.dart';
+import 'package:mobileprep_ai/features/adaptive/presentation/providers/adaptive_providers.dart';
 import 'package:mobileprep_ai/features/quiz/data/datasources/gemini_quiz_service.dart';
 import 'package:mobileprep_ai/features/quiz/data/datasources/quiz_isar_datasource.dart';
 import 'package:mobileprep_ai/features/quiz/data/models/question_attempt.dart';
@@ -24,12 +25,14 @@ final geminiQuizServiceProvider = Provider<GeminiQuizService>((ref) {
 final quizRepositoryProvider = Provider<QuizRepository>((ref) {
   final isarDataSource = ref.watch(quizIsarDataSourceProvider);
   final geminiService = ref.watch(geminiQuizServiceProvider);
+  final adaptiveDataSource = ref.watch(adaptiveIsarDataSourceProvider);
   String getApiKey() => ref.read(geminiApiKeyProvider);
 
   return QuizRepositoryImpl(
     isarDataSource: isarDataSource,
     geminiService: geminiService,
     getApiKey: getApiKey,
+    adaptiveIsarDataSource: adaptiveDataSource,
   );
 });
 

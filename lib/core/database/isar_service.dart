@@ -2,11 +2,12 @@ import 'package:flutter/foundation.dart';
 import 'package:isar_community/isar.dart';
 import 'package:path_provider/path_provider.dart';
 
-import 'package:mobileprep_ai/features/quiz/data/models/question_record.dart';
-import 'package:mobileprep_ai/features/quiz/data/models/quiz_session.dart';
-import 'package:mobileprep_ai/features/quiz/data/models/question_attempt.dart';
+import 'package:mobileprep_ai/features/adaptive/data/models/adaptive_profile_record.dart';
 import 'package:mobileprep_ai/features/live_interview/data/models/live_interview_session.dart';
 import 'package:mobileprep_ai/features/performance/data/models/performance_snapshot.dart';
+import 'package:mobileprep_ai/features/quiz/data/models/question_attempt.dart';
+import 'package:mobileprep_ai/features/quiz/data/models/question_record.dart';
+import 'package:mobileprep_ai/features/quiz/data/models/quiz_session.dart';
 
 class IsarService {
   IsarService._();
@@ -39,6 +40,7 @@ class IsarService {
         QuestionAttemptSchema,
         LiveInterviewSessionSchema,
         PerformanceSnapshotSchema,
+        AdaptiveProfileRecordSchema,
       ],
       directory: directoryPath,
       inspector: kDebugMode,

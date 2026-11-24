@@ -91,12 +91,17 @@ class SessionTrendChart extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: 4),
-                        FractionallySizedBox(
-                          heightFactor: heightFactor,
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: color,
-                              borderRadius: const BorderRadius.vertical(top: Radius.circular(6)),
+                        Expanded(
+                          child: Align(
+                            alignment: Alignment.bottomCenter,
+                            child: FractionallySizedBox(
+                              heightFactor: heightFactor,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: color,
+                                  borderRadius: const BorderRadius.vertical(top: Radius.circular(6)),
+                                ),
+                              ),
                             ),
                           ),
                         ),

@@ -17,6 +17,8 @@ class GeminiQuizService {
     required String difficulty,
     required int count,
     List<String> avoidQuestionSummaries = const [],
+    double? adaptiveRating,
+    String? adaptiveTierLabel,
   }) async {
     if (apiKey.trim().isEmpty) {
       debugPrint('Gemini API key is empty. Using curated offline question bank.');
@@ -31,13 +33,34 @@ class GeminiQuizService {
         ? '\nDO NOT generate questions similar to or repeating any of these recently seen questions:\n${avoidQuestionSummaries.take(20).map((q) => '- $q').join('\n')}'
         : '';
 
+    String depthCalibration = '';
+    final activeTier = (adaptiveTierLabel ?? difficulty).toLowerCase();
+
+    if (activeTier.contains('tech') || activeTier.contains('lead')) {
+      depthCalibration = '''
+- Adaptive Calibration: TECH LEAD (Rating Score: ${adaptiveRating?.toStringAsFixed(1) ?? '80.0'}/100)
+  Focus on multi-module/cross-platform architecture, scalability bottlenecks, failure mode recovery, migration trade-offs, sub-system design, memory constraints, and high-concurrency race conditions.
+''';
+    } else if (activeTier.contains('senior')) {
+      depthCalibration = '''
+- Adaptive Calibration: SENIOR (Rating Score: ${adaptiveRating?.toStringAsFixed(1) ?? '60.0'}/100)
+  Focus on internals (RenderObjects, Element tree, Coroutine dispatchers/channels, recomposition optimization), offline sync, edge cases, and performance profiling.
+''';
+    } else {
+      depthCalibration = '''
+- Adaptive Calibration: MID-LEVEL (Rating Score: ${adaptiveRating?.toStringAsFixed(1) ?? '35.0'}/100)
+  Focus on core framework APIs, standard architectural patterns, basic async/state management, and common mobile development best practices.
+''';
+    }
+
     final promptText = '''
 You are a Staff Mobile Engineering Interviewer at a Tier-1 tech company.
 Generate exactly $count high-quality, realistic multiple choice interview questions (MCQs) for mobile engineering candidates.
 
 Requirements:
-- Target Difficulty: $difficulty level candidate.
-- Sections: $sectionsStr.
+- Target Difficulty: $difficulty ($activeTier)
+- Sections: $sectionsStr
+$depthCalibration
 - Topics should be realistic for mobile engineering interviews (e.g., Dart event loop, Flutter RenderObjects & RepaintBoundary, Kotlin Coroutines dispatchers/flow/channels, Jetpack Compose recomposition & SubcomposeLayout, Mobile System Design cache/offline sync/pagination/battery optimization, DSA for mobile).
 $avoidPrompt
 

@@ -81,59 +81,6 @@ class _QuizSetupScreenState extends ConsumerState<QuizSetupScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Anti-Repeat Isar Status Card
-            FutureBuilder<int>(
-              future: isar.questionRecords.count(),
-              builder: (context, snapshot) {
-                final seenCount = snapshot.data ?? 0;
-                return Container(
-                  padding: const EdgeInsets.all(14),
-                  decoration: BoxDecoration(
-                    color: AppTheme.secondaryColor.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(14),
-                    border: Border.all(
-                      color: AppTheme.secondaryColor.withValues(alpha: 0.3),
-                    ),
-                  ),
-                  child: Row(
-                    children: [
-                      const Icon(
-                        Icons.shield_outlined,
-                        color: AppTheme.secondaryColor,
-                        size: 24,
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              'Anti-Repeat Engine Active (Isar v3)',
-                              style: TextStyle(
-                                fontSize: 13,
-                                fontWeight: FontWeight.w700,
-                                color: AppTheme.secondaryColor,
-                              ),
-                            ),
-                            const SizedBox(height: 2),
-                            Text(
-                              '$seenCount unique question hashes tracked in Isar. Duplicate questions are filtered automatically across all sessions.',
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.8),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-              },
-            ),
-
-            const SizedBox(height: 24),
-
             // Section Selection
             _buildSectionHeader('1. Select Interview Section(s)'),
             const SizedBox(height: 10),

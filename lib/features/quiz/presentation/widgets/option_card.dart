@@ -7,6 +7,7 @@ class OptionCard extends StatelessWidget {
   final bool isSelected;
   final bool isCorrect;
   final bool showResult;
+  final bool highlightCorrectAnswer;
   final VoidCallback? onTap;
 
   const OptionCard({
@@ -16,6 +17,7 @@ class OptionCard extends StatelessWidget {
     required this.isSelected,
     required this.isCorrect,
     required this.showResult,
+    this.highlightCorrectAnswer = false,
     this.onTap,
   });
 
@@ -43,7 +45,7 @@ class OptionCard extends StatelessWidget {
     Widget? trailingIcon;
 
     if (showResult) {
-      if (isCorrect) {
+      if (isSelected && isCorrect) {
         borderColor = AppTheme.successColor;
         backgroundColor = AppTheme.successColor.withValues(alpha: 0.12);
         letterBgColor = AppTheme.successColor;
@@ -61,6 +63,16 @@ class OptionCard extends StatelessWidget {
         trailingIcon = const Icon(
           Icons.cancel_rounded,
           color: AppTheme.errorColor,
+          size: 24,
+        );
+      } else if (isCorrect && highlightCorrectAnswer) {
+        borderColor = AppTheme.successColor;
+        backgroundColor = AppTheme.successColor.withValues(alpha: 0.12);
+        letterBgColor = AppTheme.successColor;
+        letterTextColor = Colors.white;
+        trailingIcon = const Icon(
+          Icons.check_circle_rounded,
+          color: AppTheme.successColor,
           size: 24,
         );
       }
@@ -84,7 +96,10 @@ class OptionCard extends StatelessWidget {
             decoration: BoxDecoration(
               color: backgroundColor,
               borderRadius: BorderRadius.circular(14),
-              border: Border.all(color: borderColor, width: isSelected || (showResult && isCorrect) ? 2 : 1),
+              border: Border.all(
+                color: borderColor,
+                width: isSelected || (showResult && isCorrect && (isSelected || highlightCorrectAnswer)) ? 2 : 1,
+              ),
             ),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,

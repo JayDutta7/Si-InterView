@@ -1,6 +1,11 @@
 import 'package:flutter/foundation.dart';
 import 'package:uuid/uuid.dart';
 
+import 'package:mobileprep_ai/features/adaptive/data/datasources/adaptive_isar_datasource.dart';
+import 'package:mobileprep_ai/features/adaptive/data/models/adaptive_profile_record.dart';
+import 'package:mobileprep_ai/features/adaptive/domain/models/adaptive_state.dart';
+import 'package:mobileprep_ai/features/adaptive/domain/services/adaptive_difficulty_engine.dart';
+
 import '../../../../core/utils/hash_util.dart';
 import '../../domain/entities/question_entity.dart';
 import '../../domain/repositories/quiz_repository.dart';
@@ -13,6 +18,7 @@ import '../models/quiz_session.dart';
 class QuizRepositoryImpl implements QuizRepository {
   final QuizIsarDataSource _isarDataSource;
   final GeminiQuizService _geminiService;
+  final AdaptiveIsarDataSource? _adaptiveIsarDataSource;
   final String Function() _getApiKey;
   final Uuid _uuid = const Uuid();
 
@@ -20,9 +26,11 @@ class QuizRepositoryImpl implements QuizRepository {
     required QuizIsarDataSource isarDataSource,
     required GeminiQuizService geminiService,
     required String Function() getApiKey,
+    AdaptiveIsarDataSource? adaptiveIsarDataSource,
   })  : _isarDataSource = isarDataSource,
         _geminiService = geminiService,
-        _getApiKey = getApiKey;
+        _getApiKey = getApiKey,
+        _adaptiveIsarDataSource = adaptiveIsarDataSource;
 
   @override
   Future<List<QuestionEntity>> generateQuestions({
@@ -33,6 +41,10 @@ class QuizRepositoryImpl implements QuizRepository {
     // 1. Fetch recent seen questions to pass to Gemini prompt to encourage variety
     final recentRecords = await _isarDataSource.getRecentQuestionRecords(limit: 30);
     final avoidSummaries = recentRecords.map((r) => '${r.topic}: ${r.questionText}').toList();
+
+    // Fetch active adaptive difficulty profile for prompt calibration
+    final primaryScope = sections.isNotEmpty ? sections.first : 'Global';
+    final adaptiveProfile = await _adaptiveIsarDataSource?.getProfile(primaryScope);
 
     final List<QuestionEntity> uniqueQuestions = [];
     int attempts = 0;
@@ -46,8 +58,10 @@ class QuizRepositoryImpl implements QuizRepository {
       final rawCandidates = await _geminiService.fetchMCQs(
         apiKey: _getApiKey(),
         sections: sections,
-        difficulty: difficulty,
+        difficulty: adaptiveProfile?.tier.label ?? difficulty,
         count: neededCount,
+        adaptiveRating: adaptiveProfile?.rating,
+        adaptiveTierLabel: adaptiveProfile?.tier.label,
         avoidQuestionSummaries: [
           ...avoidSummaries,
           ...uniqueQuestions.map((q) => q.questionText),
@@ -177,6 +191,33 @@ class QuizRepositoryImpl implements QuizRepository {
         session.completedAt = DateTime.now();
       }
       await _isarDataSource.updateQuizSession(session);
+    }
+
+    // 3. Update Adaptive Difficulty Profile in Isar for section and global scope
+    if (_adaptiveIsarDataSource != null) {
+      // Update section scope
+      final sectionProfile = await _adaptiveIsarDataSource.getProfile(question.section);
+      final sectionState = sectionProfile?.toDomain() ?? AdaptiveState.initial(question.section);
+      final updatedSectionState = AdaptiveDifficultyEngine.processAttempt(
+        currentState: sectionState,
+        isCorrect: isCorrect,
+        responseTimeMs: responseTimeMs,
+      );
+      await _adaptiveIsarDataSource.saveProfile(
+        AdaptiveProfileRecord.fromDomain(updatedSectionState),
+      );
+
+      // Update global scope
+      final globalProfile = await _adaptiveIsarDataSource.getProfile('Global');
+      final globalState = globalProfile?.toDomain() ?? AdaptiveState.initial('Global');
+      final updatedGlobalState = AdaptiveDifficultyEngine.processAttempt(
+        currentState: globalState,
+        isCorrect: isCorrect,
+        responseTimeMs: responseTimeMs,
+      );
+      await _adaptiveIsarDataSource.saveProfile(
+        AdaptiveProfileRecord.fromDomain(updatedGlobalState),
+      );
     }
 
     return attempt;
